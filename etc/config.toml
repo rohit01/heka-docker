@@ -1,0 +1,29 @@
+# Basic default config
+
+[hekad]
+maxprocs = 10
+share_dir = "/heka"
+
+[LogstreamerInput]
+log_directory = "/var/log"
+file_match = 'local7.log'
+
+[web]
+type = "HttpListenInput"
+address = "0.0.0.0:4881"
+
+[PayloadEncoder]
+append_newlines = false
+prefix_ts = true
+ts_format = "2006/01/02 3:04:05PM MST"
+
+[debug_output]
+type = "LogOutput"
+message_matcher = "TRUE"
+encoder = "PayloadEncoder"
+
+# Heka Dashboard for internal metrics and time series graphs
+[Dashboard]
+type = "DashboardOutput"
+address = ":4352"
+ticker_interval = 30
