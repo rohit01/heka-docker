@@ -4,6 +4,7 @@ MAINTAINER Rohit Gupta <hello@rohit.io>
 # Install from master (default)
 ENV     HEKA_VERSION="master"
 ENV     GOPATH="/go"
+ENV     HEKA_CONF="config.toml"
 
 # Install build dependencies
 RUN     apk add --update go build-base curl git mercurial ca-certificates cmake perl
@@ -31,8 +32,6 @@ RUN     mkdir -p ${GOPATH}/src/github.com/mozilla-services/ \
 COPY    etc /heka/etc/
 COPY    run.sh /heka/run.sh
 
-WORKDIR /heka
-ENV     HEKA_CONF="config.toml"
-
 # Execute
+WORKDIR /heka
 CMD     exec /heka/run.sh
