@@ -20,7 +20,7 @@ RUN mkdir -p ${GOPATH}/src/github.com/mozilla-services/ && \
         cp /go/src/github.com/mozilla-services/heka/sandbox/lua/${i}/* /heka/lua_${i}; \
     done && \
     cp /go/src/github.com/mozilla-services/heka/sandbox/lua/modules/* /heka/lua_modules && \
-    cp -r /go/src/github.com/mozilla-services/heka/dasher /heka/ &&
+    cp -r /go/src/github.com/mozilla-services/heka/dasher /heka/ && \
     go clean -i -r && \
     apk del --purge build-base go git mercurial cmake perl && \
     rm -rf ${GOPATH} /tmp/* /var/cache/apk/* /root/.n*
