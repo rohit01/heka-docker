@@ -1,32 +1,19 @@
-FROM alpine:3.2
+FROM ubuntu:16.04
 MAINTAINER Rohit Gupta <hello@rohit.io>
 
 # Install from master (default)
-ENV     HEKA_VERSION="master"
-ENV     GOPATH="/go"
+ENV     HEKA_BINARY_URL="https://github.com/mozilla-services/heka/releases/download/v0.10.0/heka_0.10.0_amd64.deb"
 ENV     HEKA_CONF="config.toml"
 
 # Install build dependencies
-RUN     apk add --update go build-base curl git mercurial ca-certificates cmake perl
-
-# Install Heka
-RUN     mkdir -p ${GOPATH}/src/github.com/mozilla-services/ \
-            /heka \
-            /heka/etc \
-            /heka/log && \
-            cd ${GOPATH}/src/github.com/mozilla-services/ && \
-            git clone https://github.com/mozilla-services/heka.git -b ${HEKA_VERSION} && \
-            cd ${GOPATH}/src/github.com/mozilla-services/heka && source build.sh && \
-            cp -r /go/src/github.com/mozilla-services/heka/build/heka/* /heka/ && \
-            for i in decoders encoders filters modules; do \
-                mkdir -p /heka/lua_${i} && \
-                cp /go/src/github.com/mozilla-services/heka/sandbox/lua/${i}/* /heka/lua_${i}; \
-            done && \
-            cp /go/src/github.com/mozilla-services/heka/sandbox/lua/modules/* /heka/lua_modules && \
-            cp -r /go/src/github.com/mozilla-services/heka/dasher /heka/ && \
-            go clean -i -r && \
-            apk del --purge build-base go git mercurial cmake perl && \
-            rm -rf ${GOPATH} /tmp/* /var/cache/apk/*
+RUN     apt-get update && \
+            apt-get -y upgrade && \
+            apt-get install -y wget && \
+            wget "${HEKA_BINARY_URL}" -O /tmp/heka.deb && \
+            dpkg -i /tmp/heka.deb && \
+            apt-get clean && \
+            rm -f /tmp/heka.deb && \
+            mkdir -p /heka/etc /heka/log
 
 # Copy configuration
 COPY    etc /heka/etc/
