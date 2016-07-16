@@ -14,7 +14,7 @@ defaultBucket = "{{REPLACE_ENV|KAFKA_DEFAULT_TOPIC}}"
 
 
 function findApplicationBucket(app)
-    if appTopicMap[app] then
+    if appTopicMap[app] then 
         return appTopicMap[app]
     end
     return defaultBucket
@@ -22,7 +22,7 @@ end
 
 function process_message()
     local ok, json = pcall(cjson.decode, read_message("Payload"))
-    if not ok then
+    if not ok then 
         return -1
     end
 
