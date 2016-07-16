@@ -11,30 +11,30 @@ export CONFIG_FILE="/heka/etc/${HEKA_CONF}"
 
 #### START - function definitions ###############################################
 replace_csv_macro() {
-    content="${1}"
-    key="$(echo "${content}" | grep "{{REPLACE_CSV|[a-zA-Z0-9_][a-zA-Z0-9_]*}}" | head -n 1 | sed "s/^.*{{REPLACE_CSV|\([a-zA-Z0-9_][a-zA-Z0-9_]*\)}}.*/\1/")"
+    tmp_content="${1}"
+    key="$(echo "${tmp_content}" | grep "{{REPLACE_CSV|[a-zA-Z0-9_][a-zA-Z0-9_]*}}" | head -n 1 | sed "s/^.*{{REPLACE_CSV|\([a-zA-Z0-9_][a-zA-Z0-9_]*\)}}.*/\1/")"
     if [ "X${key}" = "X" ]; then
-       echo "${content}"
+       echo "${tmp_content}"
        exit 1
     fi
     value="[\"$(env | grep "^${key}=.*$" | sed -e "s/^${key}=\(.*\)$/\1/" -e 's/,/", "/g')\"]"
-    echo "${content}" | sed "s/{{REPLACE_CSV|${key}}}/${value}/g"
+    echo "${tmp_content}" | sed "s/{{REPLACE_CSV|${key}}}/${value}/g"
 }
 
 env_variable_macro() {
-    content="${1}"
-    key="$(echo "${content}" | grep "{{REPLACE_ENV|[a-zA-Z0-9_][a-zA-Z0-9_]*}}" | head -n 1 | sed "s/^.*{{REPLACE_ENV|\([a-zA-Z0-9_][a-zA-Z0-9_]*\)}}.*/\1/")"
+    tmp_content="${1}"
+    key="$(echo "${tmp_content}" | grep "{{REPLACE_ENV|[a-zA-Z0-9_][a-zA-Z0-9_]*}}" | head -n 1 | sed "s/^.*{{REPLACE_ENV|\([a-zA-Z0-9_][a-zA-Z0-9_]*\)}}.*/\1/")"
     if [ "X${key}" = "X" ]; then
-       echo "${content}"
+       echo "${tmp_content}"
        exit 1
     fi
     value="$(env | grep "^${key}=.*$" | sed -e "s/^${key}=\(.*\)$/\1/")"
-    echo "${content}" | sed "s/{{REPLACE_ENV|${key}}}/${value}/g"
+    echo "${tmp_content}" | sed "s/{{REPLACE_ENV|${key}}}/${value}/g"
 }
 
 get_template() {
-    content="${1}"
-    echo "${content}" | while read line; do
+    tmp_content="${1}"
+    echo "${tmp_content}" | while read line; do
         if [ "X${found}" == "Xtrue" ]; then
             if echo "${line}" | grep "^{{TEMPLATE}}$" >/dev/null; then
                 break
@@ -56,11 +56,11 @@ generate_value() {
 }
 
 apply_template() {
-    content="${1}"
+    tmp_content="${1}"
     template="${2}"
     value="${3}"
     delete_template="${4}"
-    echo "${content}" | while read line; do
+    echo "${tmp_content}" | while read line; do
         if [ "X${justprint}" == "Xtrue" ]; then
             echo "${line}"
         elif [ "X${found}" == "Xtrue" ]; then

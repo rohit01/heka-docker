@@ -10,7 +10,7 @@ appTopicMap = {
     ['{{value}}'] = '{{key}}',
 {{TEMPLATE}}
 }
-defaultBucket = "{{REPLACE_CSV|KAFKA_DEFAULT_TOPIC}}"
+defaultBucket = "{{REPLACE_ENV|KAFKA_DEFAULT_TOPIC}}"
 
 
 function findApplicationBucket(app)
