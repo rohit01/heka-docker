@@ -22,9 +22,9 @@ filename = "lua_custom/log_batwara.lua"
 append_newlines = false
 
 {{TEMPLATE}}
-[KafkaOutput-{{value}}]
+[KafkaOutput-{{key}}]
 type = "KafkaOutput"
-message_matcher = "Type == '{{value}}'"
+message_matcher = "Type == '{{key}}'"
 topic = "{{key}}"
 addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"

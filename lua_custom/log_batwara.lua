@@ -6,9 +6,9 @@ require "string"
 
 -- Global variable
 appTopicMap = {
-{{TEMPLATE}}
+{{TEMPLATE CSV}}
     ['{{value}}'] = '{{key}}',
-{{TEMPLATE}}
+{{TEMPLATE CSV}}
 }
 defaultBucket = "{{REPLACE_ENV|KAFKA_DEFAULT_TOPIC}}"
 

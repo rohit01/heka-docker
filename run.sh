@@ -34,14 +34,20 @@ env_variable_macro() {
 
 get_template() {
     tmp_content="${1}"
+    with_break="${2}"
+    if [ "${with_break}" == "true" ]; then
+        pattern='{{TEMPLATE CSV}}'
+    else
+        pattern='{{TEMPLATE}}'
+    fi
     echo "${tmp_content}" | while read line; do
         if [ "X${found}" == "Xtrue" ]; then
-            if echo "${line}" | grep "^{{TEMPLATE}}$" >/dev/null; then
+            if echo "${line}" | grep "^${pattern}$" >/dev/null; then
                 break
             fi
             echo "${line}"
         else
-            if echo "${line}" | grep "^{{TEMPLATE}}$" >/dev/null; then
+            if echo "${line}" | grep "^${pattern}$" >/dev/null; then
                 found="true"
             fi
         fi
@@ -60,25 +66,31 @@ apply_template() {
     template="${2}"
     value="${3}"
     delete_template="${4}"
+    with_break="${5}"
+    if [ "${with_break}" == "true" ]; then
+        pattern='{{TEMPLATE CSV}}'
+    else
+        pattern='{{TEMPLATE}}'
+    fi
     IFS="\n"
     echo "${tmp_content}" | while read line; do
         if [ "X${justprint}" == "Xtrue" ]; then
             echo "${line}"
         elif [ "X${found}" == "Xtrue" ]; then
-            if echo "${line}" | grep "^{{TEMPLATE}}$" >/dev/null; then
+            if echo "${line}" | grep -e "^${pattern}$" >/dev/null; then
                 if [ "X${delete_template}" == "Xtrue" ]; then
                     justprint="true"
                     continue
                 fi
                 echo "${value}"
-                echo "{{TEMPLATE}}"
+                echo "${pattern}"
                 echo "${template}"
-                echo "{{TEMPLATE}}"
+                echo "${pattern}"
                 justprint="true"
                 continue
             fi
         else
-            if echo "${line}" | grep "^{{TEMPLATE}}$" >/dev/null; then
+            if echo "${line}" | grep -e "^${pattern}$" >/dev/null; then
                 found="true"
                 continue
             fi
@@ -98,16 +110,20 @@ generate_content_using_template() {
     tmp_content="$(env_variable_macro "${tmp_content}")"
     # Intellegent curly braces templates
     if [ "X${ITERATE_PREFIX}" != "X" ]; then
-        while echo "${tmp_content}" | grep "^{{TEMPLATE}}$" >/dev/null; do
+        while echo "${tmp_content}" | grep -e "^{{TEMPLATE}}$" -e "^{{TEMPLATE CSV}}$" >/dev/null; do
             template="$(get_template "${tmp_content}")"
+            if [ "X${template}" == "X" ]; then
+                template="$(get_template "${tmp_content}" "true")"
+                iterate_csv_value="true"
+            fi
             for var in $(env); do
                 if echo "${var}" | grep "^${ITERATE_PREFIX}" >/dev/null; then
                     key=$(echo "${var}" | sed -r "s/^${ITERATE_PREFIX}([^=]*)=.*/\1/")
                     value=$(echo "${var}" | sed -r "s/^[^=]*=(.*)/\1/")
-                        if echo "${ITERATE_CSV_VALUE}" | grep -i -e "^y$" -e "^yes$" -e "^true$" >/dev/null; then
+                        if [ "${iterate_csv_value}" == "true" ]; then
                             for new_val in $(echo "${value}" | tr ',' ' '); do
                                 generated_val="$(generate_value "${template}" "${key}" "${new_val}")"
-                                tmp_content="$(apply_template "${tmp_content}" "${template}" "${generated_val}")"
+                                tmp_content="$(apply_template "${tmp_content}" "${template}" "${generated_val}" false "${iterate_csv_value}")"
                             done
                         else
                             generated_val="$(generate_value "${template}" "${key}" "${value}")"
@@ -115,7 +131,7 @@ generate_content_using_template() {
                         fi
                 fi
             done
-            tmp_content="$(apply_template "${tmp_content}" " " " " true)"
+            tmp_content="$(apply_template "${tmp_content}" " " " " true "${iterate_csv_value}")"
         done
         echo "${tmp_content}"
     fi
