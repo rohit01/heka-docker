@@ -17,9 +17,6 @@ function findApplicationBucket(app)
     if appTopicMap[app] then
         return appTopicMap[app]
     end
-    if app then
-        return app
-    end
     return defaultBucket
 end
 

@@ -60,6 +60,7 @@ apply_template() {
     template="${2}"
     value="${3}"
     delete_template="${4}"
+    IFS="\n"
     echo "${tmp_content}" | while read line; do
         if [ "X${justprint}" == "Xtrue" ]; then
             echo "${line}"
@@ -70,7 +71,6 @@ apply_template() {
                     continue
                 fi
                 echo "${value}"
-                echo ""
                 echo "{{TEMPLATE}}"
                 echo "${template}"
                 echo "{{TEMPLATE}}"
