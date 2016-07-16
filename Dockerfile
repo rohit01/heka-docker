@@ -16,7 +16,8 @@ RUN     apt-get update && \
             mkdir -p /heka/etc /heka/log
 
 # Copy configuration
-COPY    etc /heka/etc/
+COPY    etc /heka/etc
+COPY    lua_custom /usr/share/heka/lua_custom
 COPY    run.sh /heka/run.sh
 
 # Execute

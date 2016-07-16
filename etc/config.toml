@@ -1,29 +1,34 @@
-# Basic default config
-
 [hekad]
-maxprocs = 10
-share_dir = "/heka"
+maxprocs = 1
 
-[LogstreamerInput]
-log_directory = "/var/log"
-file_match = 'local7.log'
+[KafkaInput]
+type = "KafkaInput"
+offset_method = "Newest"
+topic = "%ENV[KAFKA_INPUT_TOPIC]"
+group = "%ENV[KAFKA_INPUT_GROUP]"
+addrs = {{REPLACE_CSV|KAFKA_INPUT_BROKER}}
+decoder = "log_batwara"
 
-[web]
-type = "HttpListenInput"
-address = "0.0.0.0:4881"
+[log_batwara]
+type = "SandboxDecoder"
+filename = "lua_custom/log_batwara.lua"
 
 [PayloadEncoder]
 append_newlines = false
-prefix_ts = true
-ts_format = "2006/01/02 3:04:05PM MST"
 
-[debug_output]
-type = "LogOutput"
-message_matcher = "TRUE"
+{{TEMPLATE}}
+[KafkaOutput-{{value}}]
+type = "KafkaOutput"
+message_matcher = "Type == '{{value}}'"
+topic = "{{key}}"
+addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"
 
-# Heka Dashboard for internal metrics and time series graphs
-[Dashboard]
-type = "DashboardOutput"
-address = ":4352"
-ticker_interval = 30
+{{TEMPLATE}}
+
+[KafkaOutput]
+type = "KafkaOutput"
+message_matcher = "Type == '%ENV[KAFKA_DEFAULT_TOPIC]'"
+topic = "%ENV[KAFKA_DEFAULT_TOPIC]"
+addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
+encoder = "PayloadEncoder"
