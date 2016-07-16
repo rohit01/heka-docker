@@ -91,7 +91,7 @@ generate_content_using_template() {
     tmp_content="${1}"
     # Use REPLACE_CSV function
     tmp_content="$(replace_csv_macro "${tmp_content}")"
-    while echo "$?" | grep "^0$" >/dev/null; do 
+    while [ $? == 0 ]; do 
         tmp_content="$(replace_csv_macro "${tmp_content}")"
     done
     # Apply environment variable macro
