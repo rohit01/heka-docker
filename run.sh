@@ -138,5 +138,5 @@ if [ "X${custom_files}" != "X" ]; then
 fi
 
 # Run Heka
-exec /heka/bin/hekad --config "${CONFIG_FILE}"
+exec hekad --config "${CONFIG_FILE}"
 
