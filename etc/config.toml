@@ -3,7 +3,6 @@ maxprocs = 1
 
 [KafkaInput]
 type = "KafkaInput"
-offset_method = "Newest"
 topic = "%ENV[KAFKA_INPUT_TOPIC]"
 group = "%ENV[KAFKA_INPUT_GROUP]"
 addrs = {{REPLACE_CSV|KAFKA_INPUT_BROKER}}
