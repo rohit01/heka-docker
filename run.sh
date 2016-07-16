@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
+#
+# Startup scrit - heka
+# Author: Rohit Gupta - @rohit01
+#
 
 set -e
 
