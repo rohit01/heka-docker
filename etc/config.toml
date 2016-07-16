@@ -1,9 +1,14 @@
 [hekad]
 maxprocs = 4
+max_process_inject = 16
+poolsize = 5000
+plugin_chansize = 1000
 
 [KafkaInput]
 type = "KafkaInput"
-offset_method = "Newest"
+offset_method = "Oldest"
+max_open_reqests = 1024
+event_buffer_size = 2048
 topic = "%ENV[KAFKA_INPUT_TOPIC]"
 group = "%ENV[KAFKA_INPUT_GROUP]"
 addrs = {{REPLACE_CSV|KAFKA_INPUT_BROKER}}
