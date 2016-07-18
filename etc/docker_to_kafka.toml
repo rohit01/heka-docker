@@ -1,0 +1,34 @@
+[hekad]
+maxprocs = 1
+
+[dockerlogs]
+type = "LogstreamerInput"
+log_directory = "/var/lib/docker/containers"
+file_match = '(?P<ContainerId>[^/]+)/(?P<ContainerId>[^/]+)-json.log.?(?P<Seq>\d*)'
+priority = ["^Seq"]
+differentiator = ["ContainerId"]
+decoder = 'GelfDecoder'
+
+[GelfDecoder]
+type = "SandboxDecoder"
+filename = "lua_custom/gelf_filter.lua"
+
+[PayloadEncoder]
+append_newlines = false
+
+{{TEMPLATE}}
+[KafkaOutput-{{key}}]
+type = "KafkaOutput"
+message_matcher = "Type == '{{key}}'"
+topic = "{{key}}"
+addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
+encoder = "PayloadEncoder"
+
+{{TEMPLATE}}
+
+[KafkaOutput]
+type = "KafkaOutput"
+message_matcher = "Type == '%ENV[KAFKA_DEFAULT_TOPIC]'"
+topic = "%ENV[KAFKA_DEFAULT_TOPIC]"
+addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
+encoder = "PayloadEncoder"
