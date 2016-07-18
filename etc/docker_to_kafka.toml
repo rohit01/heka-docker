@@ -6,7 +6,7 @@ type = "LogstreamerInput"
 log_directory = "/var/lib/docker/containers"
 file_match = '(?P<ContainerId>[^/]+)/(?P<ContainerId>[^/]+)-json.log.?(?P<Seq>\d*)'
 priority = ["^Seq"]
-differentiator = ["ContainerId"]
+differentiator = ["container_id.", "ContainerId"]
 decoder = 'GelfDecoder'
 
 [GelfDecoder]
