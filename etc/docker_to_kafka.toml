@@ -1,10 +1,12 @@
 [hekad]
 maxprocs = 1
+base_dir = /hekad/log
 
 [dockerlogs]
 type = "LogstreamerInput"
 log_directory = "/var/lib/docker/containers"
-file_match = '(?P<ContainerId>[^/]+)/(?P<ContainerId>[^/]+)-json.log.?(?P<Seq>\d*)'
+file_match = '(?P<ContainerId>[^/]+)/(?P<ContainerId>[^/]+)-json.log.?(?P<Seq>\d*)?'
+rescan_interval = '3s'
 priority = ["^Seq"]
 differentiator = ["container_id.", "ContainerId"]
 decoder = 'GelfDecoder'
