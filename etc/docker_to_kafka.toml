@@ -34,3 +34,6 @@ message_matcher = "Type == '%ENV[KAFKA_DEFAULT_TOPIC]'"
 topic = "%ENV[KAFKA_DEFAULT_TOPIC]"
 addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"
+
+[DashboardOutput]
+ticker_interval = 5
