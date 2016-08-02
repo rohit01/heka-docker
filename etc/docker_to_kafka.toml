@@ -25,6 +25,7 @@ message_matcher = "Type == '{{key}}'"
 topic = "{{key}}"
 addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"
+compression_codec = "Snappy"
 
 {{TEMPLATE}}
 
@@ -34,6 +35,7 @@ message_matcher = "Type == '%ENV[KAFKA_DEFAULT_TOPIC]'"
 topic = "%ENV[KAFKA_DEFAULT_TOPIC]"
 addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"
+compression_codec = "Snappy"
 
 [DashboardOutput]
 ticker_interval = 5
