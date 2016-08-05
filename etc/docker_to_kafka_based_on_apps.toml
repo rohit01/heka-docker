@@ -13,21 +13,21 @@ decoder = 'GelfDecoder'
 
 [GelfDecoder]
 type = "SandboxDecoder"
-filename = "lua_custom/gelf_log_bucket.lua"
+filename = "lua_custom/gelf_filter.lua"
 
 [PayloadEncoder]
 append_newlines = false
 
-{{TEMPLATE CSV}}
-[KafkaOutput-{{value}}]
+{{TEMPLATE}}
+[KafkaOutput-{{key}}]
 type = "KafkaOutput"
-message_matcher = "Type == '{{value}}'"
-topic = "{{value}}"
+message_matcher = "Type == '{{key}}'"
+topic = "{{key}}"
 addrs = {{REPLACE_CSV|KAFKA_OUTPUT_BROKER}}
 encoder = "PayloadEncoder"
 compression_codec = "Snappy"
 
-{{TEMPLATE CSV}}
+{{TEMPLATE}}
 
 [KafkaOutput]
 type = "KafkaOutput"

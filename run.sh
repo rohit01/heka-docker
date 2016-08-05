@@ -10,6 +10,12 @@ export CONFIG_FILE="/heka/etc/${HEKA_CONF}"
 
 
 #### START - function definitions ###############################################
+log() {
+    loglevel="$(echo ${1} | tr '[:lower:]' '[:upper:]')"
+    message="${2}"
+    echo "heka:${loglevel} ${message}"
+}
+
 replace_csv_macro() {
     tmp_content="${1}"
     key="$(echo "${tmp_content}" | grep "{{REPLACE_CSV|[a-zA-Z0-9_][a-zA-Z0-9_]*}}" | head -n 1 | sed "s/^.*{{REPLACE_CSV|\([a-zA-Z0-9_][a-zA-Z0-9_]*\)}}.*/\1/")"
@@ -140,19 +146,26 @@ generate_content_using_template() {
 
 
 #### EXECUTE ##################################################################
+log info "[Step 1] Reading config file: ${CONFIG_FILE}"
 content="$(cat ${CONFIG_FILE})"
+log info "[Step 2] Generating config file from template"
 content="$(generate_content_using_template "${content}")"
 echo "${content}" > "${CONFIG_FILE}"
+log info "[Step 3] config file updated from template"
 
+log info "[Step 4] checking config file for custom modules"
 custom_files="$(echo "${content}" | grep "[\"']lua_custom/" | sed 's|^.*lua_custom/\([a-zA-Z_.]*\).*$|\1|')"
 if [ "X${custom_files}" != "X" ]; then
     echo "${custom_files}" | while read module_file; do
+        log info "[Step 4.1] Processing module file (${module_file}) with template"
         content="$(cat "/usr/share/heka/lua_custom/${module_file}")"
         content="$(generate_content_using_template "${content}")"
         echo "${content}" > "/usr/share/heka/lua_custom/${module_file}"
+        log info "[Step 4.2] ${module_file}) updated"
     done
 fi
 
 # Run Heka
+log info "[Step 5] Starting Heka"
 exec hekad --config "${CONFIG_FILE}"
 

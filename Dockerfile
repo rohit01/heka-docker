@@ -8,12 +8,14 @@ ENV     HEKA_CONF="config.toml"
 # Install build dependencies
 RUN     apt-get update && \
             apt-get -y upgrade && \
-            apt-get install -y wget && \
-            wget "${HEKA_BINARY_URL}" -O /tmp/heka.deb && \
+            apt-get install --no-install-recommends -y wget && \
+            wget --no-check-certificate "${HEKA_BINARY_URL}" -O /tmp/heka.deb && \
             dpkg -i /tmp/heka.deb && \
             apt-get clean && \
             rm -f /tmp/heka.deb && \
-            mkdir -p /heka/etc /heka/log
+            mkdir -p /heka/etc /heka/log && \
+            apt-get clean && \
+            rm -rf /var/lib/apt/lists/*
 
 # Copy configuration
 COPY    etc /heka/etc

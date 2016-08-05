@@ -1,2 +1,4 @@
 # heka-docker
-Docker image for mozilla-heka built from go-alpine linux
+
+Docker image for mozilla-heka.
+
