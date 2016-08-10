@@ -114,6 +114,9 @@ generate_content_using_template() {
     done
     # Apply environment variable macro
     tmp_content="$(env_variable_macro "${tmp_content}")"
+    while [ $? == 0 ]; do 
+        tmp_content="$(env_variable_macro "${tmp_content}")"
+    done
     # Intellegent curly braces templates
     if [ "X${ITERATE_PREFIX}" != "X" ]; then
         while echo "${tmp_content}" | grep -e "^{{TEMPLATE}}$" -e "^{{TEMPLATE CSV}}$" >/dev/null; do
